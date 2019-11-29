@@ -117,4 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label7.Text" xml:space="preserve">
+    <value>使用说明
+
+1、使用导入图像功能，将jpg文件导入到程序执行目录的output/image目录下
+
+2、勾选描点/标框进行描点/标框操作
+
+3、通过Adjust框修改标框微调时的像素移动距离
+
+4、通过选择无遮挡、同队遮挡、异队遮挡、多人遮挡选项确定是否存在遮挡问题
+
+5、放大/缩小按钮用于缩放图片
+
+6、标框微调具体操作为: 8—标框上移、5—标框下移、4—标框左移、6—标框右移；
+
+                        w—标框高度减小、s—标框高度增加、a—标框宽度增加、b—标框宽度减小
+
+7、所有操作执行之后会立刻写入文件，无需保存
+
+8、如果groundtruth.txt、lagel.txt、oc.txt不存在，则会默认生成对应的文件并初始化
+
+9、没有效果了就切换下图片，可能是焦点问题 </value>
+  </data>
 </root>

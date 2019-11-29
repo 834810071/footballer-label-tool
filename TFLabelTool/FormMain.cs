@@ -35,6 +35,7 @@ namespace TFLabelTool
         bool isOcfunc_ = false;
         bool isreset_ = false;
         int prelistBoxFileIndex_ = -1;
+        bool islistBoxFileIndexChanged_ = false;
 
         // 构造函数
         public FormMain()
@@ -256,9 +257,35 @@ namespace TFLabelTool
             }
         }
 
+        private void showXYWH()
+        {
+            int cnt = 0;
+            for (int i = 0; i < listBoxLable.Items.Count; ++i)
+            {
+                if (cnt == listBoxFiles.SelectedIndex)
+                {
+                    var item = listBoxLable.Items[i].ToString().Split();
+                    this.X.Text = item[0].ToString();
+                    this.Y.Text = item[1].ToString();
+                    this.W.Text = item[2].ToString();
+                    this.H.Text = item[3].ToString();
+                    break;
+                }
+                ++cnt;
+            }
+        }
+
         // listBoxFiles控件选择文件时触发
         private void listBoxFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (prelistBoxFileIndex_ != this.listBoxFiles.SelectedIndex)
+            {
+                islistBoxFileIndexChanged_ = true;
+            }
+            else
+            {
+                islistBoxFileIndexChanged_ = false;
+            }
             // 如果是FormMain_KeyDown函数调用 (通过按键调整标框位置大小) 
             // 表明是同一张图片
             if (!isFormMain_KeyDown_ && !AdjustChange_ && !isOcfunc_ && prelistBoxFileIndex_ != this.listBoxFiles.SelectedIndex)
@@ -320,6 +347,7 @@ namespace TFLabelTool
                     }
 
                     SaveGroundTruthFile();
+                    showXYWH();
 
                     //if (listBoxLable.Items.Count > 0 && listBoxFiles.SelectedIndex == listBoxLable.Items.Count)
                     //{
@@ -336,6 +364,16 @@ namespace TFLabelTool
                 }
 
                 LoadLabel(listBoxFiles.SelectedIndex);
+                if (this.radioButton1.Checked)
+                {
+                    this.GroundTruthBox1.CheckState = CheckState.Checked;
+                }
+                islistBoxFileIndexChanged_ = false;
+                //else
+                //{
+                //    this.GroundTruthBox1.CheckState = CheckState.Unchecked;
+                //    //this.OCBox1.CheckState = CheckState.Unchecked;
+                //}
             }
         }
 
@@ -364,6 +402,7 @@ namespace TFLabelTool
                 OcPoints.Add(pt);
                 g.Dispose();
                 SaveOc_Button_Click(null, null);
+                listBoxFiles_SelectedIndexChanged(null, null);
                 //isOcfunc_ = true;
                 //listBoxFiles_SelectedIndexChanged(null, null);
             }
@@ -458,6 +497,8 @@ namespace TFLabelTool
                     }
 
                     SaveGroundTruthFile();
+                    showXYWH();
+                    listBoxFiles_SelectedIndexChanged(null, null);
                 }
             }
         }
@@ -640,6 +681,7 @@ namespace TFLabelTool
                     listBoxLable.Items.Insert(listBoxFiles.SelectedIndex, String.Format("{0} {1} {2} {3}", TopLeft_X, TopLeft_Y, width, height));
                     //listBoxLable.Items.Add(String.Format("{0} {1} {2} {3} {4} {5}", RectStartPoint.X, RectStartPoint.Y, width, height, filename_, image_format));
                     SaveGroundTruthFile();
+                    showXYWH();
                     isFormMain_KeyDown_ = true;
                     listBoxFiles_SelectedIndexChanged(null, null);
                 }
@@ -737,28 +779,61 @@ namespace TFLabelTool
 
         }
 
+        int radiofrom_ = -1;
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             if (listBoxFiles.SelectedItem == null)
             {
                 return;
             }
-                
+            if ((this.OCBox1.Checked || OcPoints.Count > 0) && this.radioButton1.Checked && !islistBoxFileIndexChanged_)
+            {
+                this.radioButton1.Checked = false;
+                MessageBox.Show("描点状态/存在描点情况下不可以选择无遮挡");
+                switch(radiofrom_)
+                {
+                    case 1:
+                        this.radioButton2.Checked = true;
+                        break;
+                    case 2:
+                        this.radioButton3.Checked = true;
+                        break;
+                    case 3:
+                        this.radioButton4.Checked = true;
+                        break;
+                }
+                if (OcPoints.Count == 0)
+                {
+                    this.OCBox1.CheckState = CheckState.Unchecked;
+                }
+                radiofrom_ = -1;
+                islistBoxFileIndexChanged_ = false;
+                return;
+            }
+         
             if (this.radioButton1.Checked)
             {
-                SaveLabelFile(this.radioButton1.Text);
+                SaveLabelFile("0");
             }
+            
+
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
+
             if (listBoxFiles.SelectedItem == null)
             {
                 return;
             }
+           
             if (this.radioButton2.Checked)
             {
-                SaveLabelFile(this.radioButton2.Text);
+                SaveLabelFile("1");
+            }
+            else
+            {
+                radiofrom_ = 1;
             }
         }
 
@@ -770,7 +845,11 @@ namespace TFLabelTool
             }
             if (this.radioButton3.Checked)
             {
-                SaveLabelFile(this.radioButton3.Text);
+                SaveLabelFile("2");
+            }
+            else
+            {
+                radiofrom_ = 2;
             }
         }
 
@@ -782,7 +861,11 @@ namespace TFLabelTool
             }
             if (this.radioButton4.Checked)
             {
-                SaveLabelFile(this.radioButton4.Text);
+                SaveLabelFile("3");
+            }
+            else
+            {
+                radiofrom_ = 3;
             }
         }
 
@@ -815,9 +898,6 @@ namespace TFLabelTool
                 int select = Convert.ToInt32(line);
                 switch (select)
                 {
-                    case 0:
-                        this.radioButton1.Select();
-                        break;
                     case 1:
                         this.radioButton2.Select();
                         break;
@@ -827,8 +907,11 @@ namespace TFLabelTool
                     case 3:
                         this.radioButton4.Select();
                         break;
+                    case 0:
+                        this.radioButton1.Select();
+                        break;          
                     default:
-                        SaveLabelFile("1");
+                        SaveLabelFile("0");
                         this.radioButton1.Select();
                         break;
                 }
@@ -946,8 +1029,18 @@ namespace TFLabelTool
             listBoxFiles_SelectedIndexChanged(null, null);
         }
 
+        bool isGtoO = false;
         private void OCBox1_CheckedChanged(object sender, EventArgs e)
         {
+            if (this.radioButton1.Checked && !isGtoO)
+            {
+                isGtoO = true;
+                this.OCBox1.CheckState = CheckState.Unchecked;
+                MessageBox.Show("无遮挡情况下禁止描点");
+                isGtoO = false;
+                return;
+            }
+            isGtoO = false;
             if (this.GroundTruthBox1.Checked)
             {
                 this.GroundTruthBox1.CheckState = CheckState.Unchecked;
@@ -959,6 +1052,7 @@ namespace TFLabelTool
         {
             if (this.OCBox1.Checked)
             {
+                isGtoO = true;
                 this.OCBox1.CheckState = CheckState.Unchecked;
             }
             //this.GroundTruthBox1.CheckState = CheckState.Checked;
@@ -971,5 +1065,6 @@ namespace TFLabelTool
             SaveOc_Button_Click(null, null);
             listBoxFiles_SelectedIndexChanged(null, null);
         }
+
     }
 }

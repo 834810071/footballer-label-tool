@@ -9,6 +9,8 @@
 
 >> 3. 在存在遮挡的情况下，可以描点，表示球员中心坐标，并保存至oc.txt文件。
 
+>> 4. 图片格式 xx.jpg，图片放在exe目录/output/image文件夹下。
+
 ![图一](https://github.com/834810071/footballer-label-tool/blob/master/TFLabelTool/readme/0.png)
 
 ![图二](https://github.com/834810071/footballer-label-tool/blob/master/TFLabelTool/readme/1.png)

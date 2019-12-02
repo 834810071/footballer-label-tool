@@ -23,7 +23,7 @@ namespace TFLabelTool
         string filename_ = "groundtruth.txt";    // 标框文件
         string labelFile_ = "label.txt";         // 遮挡label文件
         string ocFile_ = "oc.txt";               // 球员中心坐标文件
-        string outputPath_ = "";                 // 输出路径
+        //string outputPath_ = "";                 // 输出路径
         string imagePath_ = "";                  // 标注图像路径
 
         int zoom_ = 1;                           // 缩放比例  
@@ -46,14 +46,15 @@ namespace TFLabelTool
         // 主窗口加载
         private void FormMain_Load(object sender, EventArgs e)
         {
-            outputPath_ = String.Format("{0}\\{1}", Application.StartupPath, "output");
-            imagePath_ = String.Format("{0}\\{1}\\", outputPath_, "image");
+            //outputPath_ = String.Format("{0}\\{1}", Application.StartupPath, "output");
+            if (imagePath_ == "")
+                imagePath_ = String.Format("{0}\\{1}\\", Application.StartupPath, "image");
 
 
-            if (!Directory.Exists(outputPath_))
-            {
-                Directory.CreateDirectory(outputPath_);
-            }
+            //if (!Directory.Exists(outputPath_))
+            //{
+            //    Directory.CreateDirectory(outputPath_);
+            //}
             if (!Directory.Exists(imagePath_))
             {
                 Directory.CreateDirectory(imagePath_);
@@ -546,14 +547,14 @@ namespace TFLabelTool
                             listBoxLable.Items.Clear();
                         }
                         listBoxFiles.Items.Clear();
-                        var dir = new DirectoryInfo(outputPath_);
-                        foreach (var file in dir.GetFiles())
-                        {
-                            if (file.Extension == ".jpg")
-                            {
-                                listBoxFiles.Items.Add(file.FullName);
-                            }
-                        }
+                        //var dir = new DirectoryInfo(outputPath_);
+                        //foreach (var file in dir.GetFiles())
+                        //{
+                        //    if (file.Extension == ".jpg")
+                        //    {
+                        //        listBoxFiles.Items.Add(file.FullName);
+                        //    }
+                        //}
                     }
 
                 }
@@ -562,7 +563,15 @@ namespace TFLabelTool
 
         private void buttonImport_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("导入功能无法使用");
+            FolderBrowserDialog dilog = new FolderBrowserDialog();
+            dilog.Description = "请选择文件夹";
+            if (dilog.ShowDialog() == DialogResult.OK || dilog.ShowDialog() == DialogResult.Yes)
+            {
+               imagePath_ = dilog.SelectedPath + "\\";
+               FormMain_Load(null, null);
+            }
+
+            //MessageBox.Show("导入功能无法使用");
             //ImportFiles(textBoxImport.Text);
             //Properties.Settings.Default.imagePath = textBoxImport.Text;
             //Properties.Settings.Default.Save();
@@ -830,6 +839,7 @@ namespace TFLabelTool
             if (this.radioButton2.Checked)
             {
                 SaveLabelFile("1");
+                OCBox1_CheckedChanged(null,null);
             }
             else
             {
@@ -953,7 +963,11 @@ namespace TFLabelTool
             int index = listBoxFiles.SelectedIndex;
             int cnt = 0;
             string allcontext = "";
-            foreach (var item in File.ReadAllLines(txt.Trim()))
+            string line = "";
+            System.IO.StreamReader file =
+                new System.IO.StreamReader(txt);
+            //foreach (var item in File.ReadAllLines(txt.Trim()))
+            while ((line = file.ReadLine()) != null)
             {
                 if (cnt++ == index)
                 {
@@ -961,22 +975,25 @@ namespace TFLabelTool
                 }
                 else
                 {
-                    if (item != null && item != "")
-                        allcontext += item.ToString() + "\r\n";
+                    if (line != null && line != "")
+                        allcontext += line + "\r\n";
                 }
             }
-           
+            file.Close();
+            File.Delete(txt);
+            File.AppendAllText(txt, allcontext);
 
-            using (FileStream _file = new FileStream(@txt, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-            using (StreamWriter writer1 = new StreamWriter(_file))
-            {
- 
-                writer1.WriteLine(allcontext);
-                writer1.Flush();
-                writer1.Close();
 
-                _file.Close();
-            }
+            //using (FileStream _file = new FileStream(@txt, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            //using (StreamWriter writer1 = new StreamWriter(_file))
+            //{
+
+            //    writer1.WriteLine(allcontext);
+            //    //writer1.Flush();
+            //    writer1.Close();
+
+            //    _file.Close();
+            //}
         }
 
         private void AdjustX_ValueChanged(object sender, EventArgs e)
@@ -1044,6 +1061,7 @@ namespace TFLabelTool
             if (this.GroundTruthBox1.Checked)
             {
                 this.GroundTruthBox1.CheckState = CheckState.Unchecked;
+                //this.OCBox1.CheckState = CheckState.Checked;
             }
             //this.OCBox1.CheckState = CheckState.Checked;
         }

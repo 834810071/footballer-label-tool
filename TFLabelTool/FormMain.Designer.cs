@@ -328,13 +328,12 @@
             // 
             // buttonImport
             // 
-            this.buttonImport.Location = new System.Drawing.Point(892, 20);
+            this.buttonImport.Location = new System.Drawing.Point(985, 23);
             this.buttonImport.Name = "buttonImport";
-            this.buttonImport.Size = new System.Drawing.Size(75, 21);
+            this.buttonImport.Size = new System.Drawing.Size(43, 21);
             this.buttonImport.TabIndex = 21;
-            this.buttonImport.Text = "导入";
+            this.buttonImport.Text = "open";
             this.buttonImport.UseVisualStyleBackColor = true;
-            this.buttonImport.Visible = false;
             this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
             // 
             // textBoxImport

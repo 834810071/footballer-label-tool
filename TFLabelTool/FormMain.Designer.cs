@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_FormClosing);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label6 = new System.Windows.Forms.Label();
@@ -470,7 +471,7 @@
             this.listBoxFiles.Size = new System.Drawing.Size(216, 460);
             this.listBoxFiles.TabIndex = 2;
             this.listBoxFiles.SelectedIndexChanged += new System.EventHandler(this.listBoxFiles_SelectedIndexChanged);
-            this.listBoxFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBoxFiles_KeyUp);
+            //this.listBoxFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBoxFiles_KeyUp);
             // 
             // OCBox1
             // 

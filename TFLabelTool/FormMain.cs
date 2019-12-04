@@ -282,6 +282,15 @@ namespace TFLabelTool
             if (prelistBoxFileIndex_ != this.listBoxFiles.SelectedIndex)
             {
                 islistBoxFileIndexChanged_ = true;
+                if (this.radioButton2.Checked || this.radioButton3.Checked || this.radioButton4.Checked)
+                {
+                    if (OcPoints.Count == 0)
+                    {
+                        this.listBoxFiles.SelectedIndex = prelistBoxFileIndex_;
+                        islistBoxFileIndexChanged_ = false;
+                        MessageBox.Show("存在遮挡的情况下必须描点");
+                    }
+                }
             }
             else
             {
@@ -378,10 +387,9 @@ namespace TFLabelTool
             }
         }
 
-
         private Point RectStartPoint;
         private Rectangle Rect = new Rectangle();
-        private Brush selectionBrush = new SolidBrush(Color.FromArgb(128, 72, 145, 220));
+        private Brush selectionBrush = new SolidBrush(Color.FromArgb(50, 72, 145, 220));
 
         private List<Point> OcPoints = new List<Point>();
 
@@ -414,18 +422,28 @@ namespace TFLabelTool
         {
             if (this.GroundTruthBox1.Checked)
             {
-                if (e.Button != MouseButtons.Left)
+                if (e.Button != MouseButtons.Left)//判断是否按下左键
                     return;
-
-                Debug.WriteLine(e.Location.ToString());
-                Point tempEndPoint = e.Location;
+                Point tempEndPoint = e.Location; //记录框的位置和大小
                 Rect.Location = new Point(
-                    Math.Min(RectStartPoint.X, tempEndPoint.X),
-                    Math.Min(RectStartPoint.Y, tempEndPoint.Y));
+                Math.Min(RectStartPoint.X, tempEndPoint.X),
+                Math.Min(RectStartPoint.Y, tempEndPoint.Y));
                 Rect.Size = new Size(
-                    Math.Abs(RectStartPoint.X - tempEndPoint.X),
-                    Math.Abs(RectStartPoint.Y - tempEndPoint.Y));
+                Math.Abs(RectStartPoint.X - tempEndPoint.X),
+                Math.Abs(RectStartPoint.Y - tempEndPoint.Y));
                 pictureBox1.Invalidate();
+                //if (e.Button != MouseButtons.Left)
+                //    return;
+
+                //Debug.WriteLine(e.Location.ToString());
+                //Point tempEndPoint = e.Location;
+                //Rect.Location = new Point(
+                //    Math.Min(RectStartPoint.X, tempEndPoint.X),
+                //    Math.Min(RectStartPoint.Y, tempEndPoint.Y));
+                //Rect.Size = new Size(
+                //    Math.Abs(RectStartPoint.X - tempEndPoint.X),
+                //    Math.Abs(RectStartPoint.Y - tempEndPoint.Y));
+                //pictureBox1.Invalidate();
             }
         }
 
@@ -437,7 +455,9 @@ namespace TFLabelTool
                 {
                     if (Rect != null && Rect.Width > 0 && Rect.Height > 0)
                     {
-                        e.Graphics.FillRectangle(selectionBrush, Rect);
+                        //e.Graphics.FillRectangle(selectionBrush, Rect);
+                        e.Graphics.DrawRectangle(new Pen(Color.Red, 3), Rect);//重新绘制颜色为红色
+            
                     }
                 }
                 
@@ -503,6 +523,8 @@ namespace TFLabelTool
                 }
             }
         }
+
+
 
         private void listBoxFiles_KeyUp(object sender, KeyEventArgs e)
         {
@@ -646,17 +668,118 @@ namespace TFLabelTool
             System.Diagnostics.Process.Start("explorer.exe", imagePath_);
         }
 
+
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            //if (listBoxFiles.SelectedItem == null)
+            //{
+            //    return;
+            //}
+
+            //if (e.KeyValue != 100 && e.KeyValue != 104 && e.KeyValue != 102 && e.KeyValue != 101
+            //    && e.KeyValue != 87 && e.KeyValue != 83 && e.KeyValue != 65 && e.KeyValue != 68
+            //    && e.KeyValue != 37 && e.KeyValue != 38 && e.KeyValue != 39 && e.KeyValue != 40)
+            //{
+            //    return;
+            //}
+
+            //if (listBoxLable.SelectedIndex != -1)
+            //{
+            //    var line = listBoxLable.SelectedItem.ToString();
+            //    if (line != "")
+            //    {
+            //        var items = line.Split(' ');
+            //        //MessageBox.Show(String.Format("TopLeft_X={0} \nTopLeft_Y={1} \nwidth={2}\nheight={3}\nfilename_={4}\nimage_format={5}",
+            //        //    items[0], items[1], items[2], items[3], items[4], items[5]), "样本标注信息");
+
+            //        int TopLeft_X = Convert.ToInt32(items[0]);
+            //        int TopLeft_Y = Convert.ToInt32(items[1]);
+            //        int width = Convert.ToInt32(items[2]);
+            //        int height = Convert.ToInt32(items[3]);
+
+            //        switch (e.KeyValue)
+            //        {
+            //            case 104: { TopLeft_Y -= Convert.ToInt32(AdjustY.Value); } break;     // 上
+            //            case 101: { TopLeft_Y += Convert.ToInt32(AdjustY.Value); } break;     // 下
+            //            case 100: { TopLeft_X -= Convert.ToInt32(AdjustX.Value); } break;      // 左 
+            //            case 102: { TopLeft_X += Convert.ToInt32(AdjustX.Value); } break;      // 右
+            //            case 87: { height -= Convert.ToInt32(AdjustHeight.Value); } break;     // w
+            //            case 83: { height += Convert.ToInt32(AdjustHeight.Value); } break;     // s
+            //            case 65: { width -= Convert.ToInt32(AdjustWidth.Value); } break;      // a 
+            //            case 68: { width += Convert.ToInt32(AdjustWidth.Value); } break;      // d
+            //            case 37:
+            //                if (this.listBoxFiles.SelectedIndex > 0)
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex - 1;
+            //                }
+            //                else
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = 0;
+            //                }
+            //                break;
+            //            case 38:
+            //                if (this.listBoxFiles.SelectedIndex > 0)
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex - 1;
+            //                }
+            //                else
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = 0;
+            //                }
+            //                break;
+            //            case 39:
+            //                if (this.listBoxFiles.SelectedIndex < this.listBoxFiles.Items.Count - 1)
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex + 1;
+            //                }
+            //                else
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.Items.Count - 1;
+            //                }
+            //                break;
+            //            case 40:
+            //                if (this.listBoxFiles.SelectedIndex < this.listBoxFiles.Items.Count - 1)
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex + 1;
+            //                }
+            //                else
+            //                {
+            //                    this.listBoxFiles.SelectedIndex = this.listBoxFiles.Items.Count - 1;
+            //                }
+            //                break;
+            //        }
+
+            //        if (e.KeyValue == 37 || e.KeyValue == 38 || e.KeyValue == 39 || e.KeyValue == 40)
+            //        {
+            //            listBoxFiles_SelectedIndexChanged(null, null);
+            //            return;
+            //        }
+
+            //        if (listBoxLable.Items.Count > listBoxFiles.SelectedIndex)
+            //            listBoxLable.Items.RemoveAt(listBoxFiles.SelectedIndex);
+            //        listBoxLable.Items.Insert(listBoxFiles.SelectedIndex, String.Format("{0} {1} {2} {3}", TopLeft_X, TopLeft_Y, width, height));
+            //        //listBoxLable.Items.Add(String.Format("{0} {1} {2} {3} {4} {5}", RectStartPoint.X, RectStartPoint.Y, width, height, filename_, image_format));
+            //        SaveGroundTruthFile();
+            //        showXYWH();
+            //        isFormMain_KeyDown_ = true;
+            //        listBoxFiles_SelectedIndexChanged(null, null);
+            //    }
+            //}
+
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (listBoxFiles.SelectedItem == null)
             {
-                return;
+                return base.ProcessCmdKey(ref msg, keyData); ;
             }
 
-            if (e.KeyValue != 100 && e.KeyValue != 104 && e.KeyValue != 102 && e.KeyValue != 101
-                && e.KeyValue != 87 && e.KeyValue != 83 && e.KeyValue != 65 && e.KeyValue != 68)
+            if (keyData != Keys.D8 && keyData != Keys.D5 && keyData != Keys.D4 && keyData != Keys.D6
+                && keyData != Keys.W && keyData != Keys.S && keyData != Keys.A && keyData != Keys.D
+                && keyData != Keys.Up && keyData != Keys.Down && keyData != Keys.Left && keyData != Keys.Right)
             {
-                return;
+                return base.ProcessCmdKey(ref msg, keyData); ;
             }
 
             if (listBoxLable.SelectedIndex != -1)
@@ -673,16 +796,62 @@ namespace TFLabelTool
                     int width = Convert.ToInt32(items[2]);
                     int height = Convert.ToInt32(items[3]);
 
-                    switch (e.KeyValue)
+                    switch (keyData)
                     {
-                        case 104: { TopLeft_Y -= Convert.ToInt32(AdjustY.Value); } break;     // 上
-                        case 101: { TopLeft_Y += Convert.ToInt32(AdjustY.Value); } break;     // 下
-                        case 100: { TopLeft_X -= Convert.ToInt32(AdjustX.Value); } break;      // 左 
-                        case 102: { TopLeft_X += Convert.ToInt32(AdjustX.Value); } break;      // 右
-                        case 87: { height -= Convert.ToInt32(AdjustHeight.Value); } break;     // w
-                        case 83: { height += Convert.ToInt32(AdjustHeight.Value); } break;     // s
-                        case 65: { width -= Convert.ToInt32(AdjustWidth.Value); } break;      // a 
-                        case 68: { width += Convert.ToInt32(AdjustWidth.Value); } break;      // d
+                        case Keys.D8: { TopLeft_Y -= Convert.ToInt32(AdjustY.Value); } break;     // 上
+                        case Keys.D5: { TopLeft_Y += Convert.ToInt32(AdjustY.Value); } break;     // 下
+                        case Keys.D4: { TopLeft_X -= Convert.ToInt32(AdjustX.Value); } break;      // 左 
+                        case Keys.D6: { TopLeft_X += Convert.ToInt32(AdjustX.Value); } break;      // 右
+                        case Keys.W: { height -= Convert.ToInt32(AdjustHeight.Value); } break;     // w
+                        case Keys.S: { height += Convert.ToInt32(AdjustHeight.Value); } break;     // s
+                        case Keys.A: { width -= Convert.ToInt32(AdjustWidth.Value); } break;      // a 
+                        case Keys.D: { width += Convert.ToInt32(AdjustWidth.Value); } break;      // d
+                        case Keys.Up:
+                            if (this.listBoxFiles.SelectedIndex > 0)
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex - 1;
+                            }
+                            else
+                            {
+                                this.listBoxFiles.SelectedIndex = 0;
+                            }
+                            break;
+                        case Keys.Down:
+                            if (this.listBoxFiles.SelectedIndex < this.listBoxFiles.Items.Count - 1)
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex + 1;
+                            }
+                            else
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.Items.Count - 1;
+                            }
+                            break;
+                        case Keys.Left:
+                            if (this.listBoxFiles.SelectedIndex < this.listBoxFiles.Items.Count - 1)
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex + 1;
+                            }
+                            else
+                            {
+                                this.listBoxFiles.SelectedIndex = 0;
+                            }
+                            break;
+                        case Keys.Right:
+                            if (this.listBoxFiles.SelectedIndex < this.listBoxFiles.Items.Count - 1)
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.SelectedIndex + 1;
+                            }
+                            else
+                            {
+                                this.listBoxFiles.SelectedIndex = this.listBoxFiles.Items.Count - 1;
+                            }
+                            break;
+                    }
+
+                    if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
+                    {
+                        listBoxFiles_SelectedIndexChanged(null, null);
+                        return base.ProcessCmdKey(ref msg, keyData); ;
                     }
 
                     if (listBoxLable.Items.Count > listBoxFiles.SelectedIndex)
@@ -696,8 +865,10 @@ namespace TFLabelTool
                 }
             }
 
+            // Call the base class
+            return base.ProcessCmdKey(ref msg, keyData);
         }
-        
+
         private void scaleRect()
         {
             if (listBoxFiles.SelectedIndex != -1)
@@ -1084,5 +1255,18 @@ namespace TFLabelTool
             listBoxFiles_SelectedIndexChanged(null, null);
         }
 
+        private void Form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.radioButton2.Checked || this.radioButton3.Checked || this.radioButton4.Checked)
+            {
+                if (OcPoints.Count == 0)
+                {
+                    this.listBoxFiles.SelectedIndex = prelistBoxFileIndex_;
+                    islistBoxFileIndexChanged_ = false;
+                    MessageBox.Show("存在遮挡的情况下必须描点");
+                    e.Cancel = true;
+                }
+            }
+        }
     }
 }

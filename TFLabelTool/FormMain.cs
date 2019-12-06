@@ -775,7 +775,7 @@ namespace TFLabelTool
                 return base.ProcessCmdKey(ref msg, keyData); ;
             }
 
-            if (keyData != Keys.D8 && keyData != Keys.D5 && keyData != Keys.D4 && keyData != Keys.D6
+            if (keyData != Keys.NumPad8 && keyData != Keys.NumPad5 && keyData != Keys.NumPad4 && keyData != Keys.NumPad6
                 && keyData != Keys.W && keyData != Keys.S && keyData != Keys.A && keyData != Keys.D
                 && keyData != Keys.Up && keyData != Keys.Down && keyData != Keys.Left && keyData != Keys.Right)
             {
@@ -798,10 +798,10 @@ namespace TFLabelTool
 
                     switch (keyData)
                     {
-                        case Keys.D8: { TopLeft_Y -= Convert.ToInt32(AdjustY.Value); } break;     // 上
-                        case Keys.D5: { TopLeft_Y += Convert.ToInt32(AdjustY.Value); } break;     // 下
-                        case Keys.D4: { TopLeft_X -= Convert.ToInt32(AdjustX.Value); } break;      // 左 
-                        case Keys.D6: { TopLeft_X += Convert.ToInt32(AdjustX.Value); } break;      // 右
+                        case Keys.NumPad8: { TopLeft_Y -= Convert.ToInt32(AdjustY.Value); } break;     // 上
+                        case Keys.NumPad5: { TopLeft_Y += Convert.ToInt32(AdjustY.Value); } break;     // 下
+                        case Keys.NumPad4: { TopLeft_X -= Convert.ToInt32(AdjustX.Value); } break;      // 左 
+                        case Keys.NumPad6: { TopLeft_X += Convert.ToInt32(AdjustX.Value); } break;      // 右
                         case Keys.W: { height -= Convert.ToInt32(AdjustHeight.Value); } break;     // w
                         case Keys.S: { height += Convert.ToInt32(AdjustHeight.Value); } break;     // s
                         case Keys.A: { width -= Convert.ToInt32(AdjustWidth.Value); } break;      // a 
